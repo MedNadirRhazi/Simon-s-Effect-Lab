@@ -71,9 +71,8 @@
         <form action="{{ url_for('index') }}">
             <button class="button" type="submit">Back to Home / Retour à l'accueil</button>
         </form>
-        <form action="/download-excel">
-            <button class="button" type="submit">Export / Exporter</button>
-        </form>
+        <button class="button" type="button" onclick="exportToExcel()">Export / Exporter</button>
+
     </div>
     <script>
         const resultsTableBody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
@@ -94,6 +93,28 @@
             cell4.textContent = trial.reactionTime;
             cell5.textContent = trial.status;
         });
+
+        function exportToExcel() {
+            const data = JSON.parse(localStorage.getItem('results')) || [];
+            fetch('/download-excel', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({results: data})
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'results.xlsx');
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+            });
+        }
+
     </script>
 </body>
 </html>
