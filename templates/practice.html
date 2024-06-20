@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pratique de l'Effet de Simon</title>
+    <style>
+        .centered-message {
+            position: absolute;
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            font-size: 60px; 
+            font-weight: bold; 
+            color: #0a0a0b; 
+            text-align: center; 
+            opacity: 1; 
+            transition: opacity 0.5s ease-in-out; 
+        }
+        #stimulus {
+            width: 60%; 
+            display: none; 
+        }
+    </style>
+</head>
+<body>
+    <div id="initialMessage" class="centered-message">Appuyez sur 'Espace' pour commencer</div>
+    <div id="stimulus" class="centered-message"></div>
+    <div id="endMessage" class="centered-message" style="display: none;">
+        Fin des essais. Cliquez ci-dessous pour voir vos résultats.
+        <br><br>
+        <button onclick="window.location.href='/results'">Voir Résultats</button>
+    </div>
+
+    <script>
+        let trials = [];
+        let currentTrialIndex = 0;
+        let lastPosition = null; 
+        let startTime;
+        let results = [];
+        let displayText;
+        let stimulusType;
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === ' ' || event.code === 'Space') {
+                document.getElementById('initialMessage').style.display = 'none';
+                document.getElementById('stimulus').style.display = 'block';
+                startTrials();
+            } else if (event.key.toUpperCase() === 'A' || event.key.toUpperCase() === 'L') {
+                handleResponse(event.key.toUpperCase());
+            }
+        });
+
+        function startTrials() {
+            fetch('/get_trials')
+                .then(response => response.json())
+                .then(data => {
+                    trials = data.trials;
+                    nextTrial();
+                });
+        }
+
+        function nextTrial() {
+            if (currentTrialIndex < trials.length) {
+                let trial = trials[currentTrialIndex];
+                let stimulus = document.getElementById('stimulus');
+                let displaySide = Math.random() < 0.5 ? 'left' : 'right';
+                stimulus.style.textAlign = displaySide;
+
+                stimulus.innerText = (trial.position === 'left' ? 'Gauche' : 'Droite');
+                displayText = (displaySide === 'left' ? 'Gauche' : 'Droite')
+                stimulusType = `Stimulus ${stimulus.innerText.toUpperCase()} à ${displayText.toUpperCase()}`;
+
+                if (lastPosition === trial.position) {
+                    stimulus.style.opacity = 0; 
+                    setTimeout(() => {
+                        stimulus.style.opacity = 1;
+                        startTime = new Date().getTime();
+                        startResponseTimer();
+                    }, 200);
+                } else {
+                    startTime = new Date().getTime();
+                    startResponseTimer();
+                }
+                lastPosition = trial.position; 
+            } else {
+                endTest();
+            }
+        }
+
+        function endTest() {
+            document.getElementById('stimulus').style.display = 'none';
+            document.getElementById('endMessage').style.display = 'block';
+            localStorage.setItem('results', JSON.stringify(results));
+            console.log(results);
+        }
+
+
+        function startResponseTimer() {
+            if (window.responseTimer) {
+                clearTimeout(window.responseTimer);
+            }
+
+            window.responseTimer = setTimeout(() => {
+                console.log(`Essai ${currentTrialIndex + 1}: Timeout`);
+                handleTimeout();
+            }, 2000);  
+        }
+
+        function handleResponse(key) {
+            let trial = trials[currentTrialIndex];
+            let correct = (trial.position === 'left' && key === 'A') || (trial.position === 'right' && key === 'L');
+            let endTime = new Date().getTime();
+            let reactionTime = endTime - startTime;
+            let result = {
+                trial: currentTrialIndex + 1,
+                response: key,
+                reactionTime: reactionTime,
+                status: correct ? 'Correct' : 'Incorrect',
+                stimulusType: `Stimulus ${stimulus.innerText.toUpperCase()} à ${displayText.toUpperCase()}`
+            };
+
+            results.push(result);
+
+            currentTrialIndex++;
+            if (currentTrialIndex < trials.length) {
+                nextTrial();
+            } else {
+                endTest();
+            }
+        }
+
+        function handleTimeout() {
+            let trial = trials[currentTrialIndex];
+            let result = {
+                trial: currentTrialIndex + 1,
+                response: 'Timeout',
+                reactionTime: 'N/A',
+                status: 'Timeout',
+                stimulusType: `Stimulus ${stimulus.innerText.toUpperCase()} à ${displayText.toUpperCase()}`
+            };
+
+            results.push(result);
+            currentTrialIndex++;
+            if (currentTrialIndex < trials.length) {
+                nextTrial();
+            } else {
+                endTest();
+            }
+        }
+
+        function clearResults() {
+            localStorage.removeItem('results');  
+            window.location.href = '/practice';  
+        }
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab #1 - APA 3120/3520</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2vh; 
+        }
+        
+        table {
+            width: 90%; 
+            border-collapse: collapse; 
+            margin-top: 2vh; 
+        }
+        th, td {
+            border: 1px solid black; 
+            padding: 1vw; 
+            text-align: center; 
+        }
+        th {
+            background-color: #f2f2f2; 
+        }
+        .highlightgreen {
+            background: rgb(5, 190, 5); 
+        }
+        .highlightgray {
+            background: rgb(151, 156, 151); 
+        }
+        button {
+            padding: 1vh 2vw; 
+            font-size: 1.6vh; 
+            cursor: pointer;
+            border: none; 
+            background-color: #007BFF; 
+            color: white; 
+            border-radius: 5px; 
+            transition: background-color 0.3s; 
+            margin-top: 1vh;
+        }
+    
+        button:hover {
+            background-color: #0056b3; 
+        }
+    </style>
+    
+</head>
+<body>
+    <h1>Welcome to Lab #2 / Bienvenue au Laboratoire #2 - APA 3120/3520</h1>
+    <table>
+        <tr>
+            <th></th>
+            <th></th>
+        </tr>
+        <tr>
+            <td>
+                THIS EXPERIMENT IS TO BE COMPLETED ON A DEVICE WITH A TOUCHSCREEN (MNT 417 computers, phone, tablet).
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+            </td>
+            <td>
+                CETTE EXPÉRIENCE DOIT ÊTRE COMPLÉTÉE SUR UN APPAREIL AVEC UN ÉCRAN TACTILE (ordinateurs de MNT 417, cellulaire, tablette).
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+            </td>
+        </tr>
+    </table>
+    <form action="{{ url_for('practice') }}">
+        <button type="submit">Commencer l'expérience</button>
+    </form>
+</body>
+</html>
