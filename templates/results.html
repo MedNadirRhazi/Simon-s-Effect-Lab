@@ -57,11 +57,11 @@
     <table id="resultsTable">
         <thead>
             <tr>
-                <th>Essai #</th>
-                <th>Type de Stimulus</th>
-                <th>Réponse</th>
-                <th>Temps de Réaction (ms)</th>
-                <th>Statut</th>
+                <th>Trial / Essai #</th>
+                <th>Stimulus type / Type de Stimulus</th>
+                <th>Compatibility / Compatibilité</th>
+                <th>Reaction time / Temps de Réaction (ms)</th>
+                <th>Status / Statut</th>
             </tr>
         </thead>
         <tbody>
@@ -77,6 +77,8 @@
     <script>
         const resultsTableBody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
         const trials = JSON.parse(localStorage.getItem('results')) || [];
+        
+
 
         trials.forEach((trial, index) => {
             const row = resultsTableBody.insertRow();
@@ -85,11 +87,11 @@
             const cell3 = row.insertCell(2);
             const cell4 = row.insertCell(3);
             const cell5 = row.insertCell(4);
-
+            
 
             cell1.textContent = index + 1;
             cell2.textContent = trial.stimulusType;
-            cell3.textContent = trial.response;
+            cell3.textContent = trial.isCompatible;
             cell4.textContent = trial.reactionTime;
             cell5.textContent = trial.status;
         });

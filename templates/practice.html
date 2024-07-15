@@ -19,15 +19,30 @@
             width: 60%; 
             display: none; 
         }
+        button {
+            padding: 1vh 2vw; 
+            font-size: 1.6vh; 
+            cursor: pointer;
+            border: none; 
+            background-color: #007BFF; 
+            color: white; 
+            border-radius: 5px; 
+            transition: background-color 0.3s; 
+            margin-top: 1vh;
+        }
+    
+        button:hover {
+            background-color: #0056b3; 
+        }
     </style>
 </head>
 <body>
-    <div id="initialMessage" class="centered-message">Appuyez sur 'Espace' pour commencer</div>
+    <div id="initialMessage" class="centered-message">Press 'Space' to start / Appuyez sur 'Espace' pour commencer</div>
     <div id="stimulus" class="centered-message"></div>
     <div id="endMessage" class="centered-message" style="display: none;">
-        Fin des essais. Cliquez ci-dessous pour voir vos résultats.
+        End of trials. Click below to see your results. / Fin des essais. Cliquez ci-dessous pour voir vos résultats.
         <br><br>
-        <button onclick="window.location.href='/results'">Voir Résultats</button>
+        <button onclick="window.location.href='/results'">See results / Voir Résultats</button>
     </div>
 
     <script>
@@ -65,9 +80,9 @@
                 let displaySide = Math.random() < 0.5 ? 'left' : 'right';
                 stimulus.style.textAlign = displaySide;
 
-                stimulus.innerText = (trial.position === 'left' ? 'Gauche' : 'Droite');
-                displayText = (displaySide === 'left' ? 'Gauche' : 'Droite')
-                stimulusType = `Stimulus ${stimulus.innerText.toUpperCase()} à ${displayText.toUpperCase()}`;
+                stimulus.innerText = (trial.position === 'left' ? 'Left/Gauche' : 'Right/Droite');
+                displayText = (displaySide === 'left' ? 'Left/Gauche' : 'Right/Droite')
+                stimulusType = `Stimulus ${stimulus.innerText.toUpperCase()} on/à ${displayText.toUpperCase()}`;
 
                 if (lastPosition === trial.position) {
                     stimulus.style.opacity = 0; 
@@ -110,12 +125,13 @@
             let correct = (trial.position === 'left' && key === 'A') || (trial.position === 'right' && key === 'L');
             let endTime = new Date().getTime();
             let reactionTime = endTime - startTime;
+            let isCompatible = stimulus.innerText.toUpperCase() === displayText.toUpperCase() ? 'Compatible' : 'Incompatible';
             let result = {
                 trial: currentTrialIndex + 1,
-                response: key,
+                isCompatible: isCompatible,
                 reactionTime: reactionTime,
                 status: correct ? 'Correct' : 'Incorrect',
-                stimulusType: `Stimulus ${stimulus.innerText.toUpperCase()} à ${displayText.toUpperCase()}`
+                stimulusType: `Stimulus ${stimulus.innerText.toUpperCase()} on/à ${displayText.toUpperCase()}`
             };
 
             results.push(result);
@@ -132,10 +148,10 @@
             let trial = trials[currentTrialIndex];
             let result = {
                 trial: currentTrialIndex + 1,
-                response: 'Timeout',
+                isCompatible: 'Timeout',
                 reactionTime: 'N/A',
                 status: 'Timeout',
-                stimulusType: `Stimulus ${stimulus.innerText.toUpperCase()} à ${displayText.toUpperCase()}`
+                stimulusType: `Stimulus ${stimulus.innerText.toUpperCase()} on/à ${displayText.toUpperCase()}`
             };
 
             results.push(result);

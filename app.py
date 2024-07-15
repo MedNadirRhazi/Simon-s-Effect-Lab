@@ -24,7 +24,7 @@ def practice():
 @app.route('/get_trials')
 def get_trials():
     trials = []
-    for _ in range(100):
+    for _ in range(50):
         position = random.choice(['left', 'right'])
         correct_key = 'A' if position == 'left' else 'L'
         trials.append({'position': position, 'correct_key': correct_key})
@@ -34,6 +34,7 @@ def get_trials():
 def download_excel():
     data = request.json['results']
     df = pd.DataFrame(data)
+    print(df.columns)  
     output = BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         df.to_excel(writer, index=False)
